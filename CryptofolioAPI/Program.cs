@@ -34,3 +34,8 @@ namespace CryptofolioAPI
         }
     }
 }
+
+
+
+//CoinGecko API Key
+//CG - kWML6ofa3cCdoK2qnwvboSZw
