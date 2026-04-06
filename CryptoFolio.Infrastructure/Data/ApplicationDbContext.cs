@@ -164,11 +164,24 @@ namespace CryptoFolio.Infrastructure.Data
                 if (entry.State == EntityState.Added)
                 {
                     entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
+
+                    if (entry.Entity.GetType().GetProperty("CreatedBy") != null)
+                        entry.Property("CreatedBy").CurrentValue = "System";
+
+                    if (entry.Entity.GetType().GetProperty("ModifiedAt") != null)
+                        entry.Property("ModifiedAt").CurrentValue = DateTime.UtcNow;
+
+                    if (entry.Entity.GetType().GetProperty("ModifiedBy") != null)
+                        entry.Property("ModifiedBy").CurrentValue = "System";
                 }
 
                 if (entry.State == EntityState.Modified)
                 {
-                    entry.Property("ModifiedAt").CurrentValue = DateTime.UtcNow;
+                    if (entry.Entity.GetType().GetProperty("ModifiedAt") != null)
+                        entry.Property("ModifiedAt").CurrentValue = DateTime.UtcNow;
+
+                    if (entry.Entity.GetType().GetProperty("ModifiedBy") != null)
+                        entry.Property("ModifiedBy").CurrentValue = "System";
                 }
             }
 

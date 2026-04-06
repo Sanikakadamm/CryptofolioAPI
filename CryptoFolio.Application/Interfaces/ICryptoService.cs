@@ -12,5 +12,9 @@ namespace CryptoFolio.Application.Interfaces
         List<CryptoResponseDTO> GetAllCryptos();
 
         CryptoResponseDTO GetCryptoById(int cryptoId);
+
+        Task<string> GetCoinFromAPI(string coinId);
+
+        Task<string> GetCoinListFromAPI();
     }
 }
