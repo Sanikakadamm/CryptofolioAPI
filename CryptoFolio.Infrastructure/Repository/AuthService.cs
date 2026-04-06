@@ -1,14 +1,9 @@
 ﻿using AutoMapper;
+using BCrypt.Net;
 using CryptoFolio.Application.DTO.Auth;
 using CryptoFolio.Application.Interfaces;
 using CryptoFolio.Domain.Models;
 using CryptoFolio.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CryptoFolio.Infrastructure.Repository
 {
@@ -16,17 +11,27 @@ namespace CryptoFolio.Infrastructure.Repository
     {
         ApplicationDbContext db;
         IMapper mapper;
+        JwtService jwt;
 
-        public AuthService(ApplicationDbContext db, IMapper mapper)
+        public AuthService(ApplicationDbContext db, IMapper mapper, JwtService jwt)
         {
             this.db = db;
             this.mapper = mapper;
+            this.jwt = jwt;
         }
 
-
-        AuthResponseDTO IAuthService.Register(RegisterDTO dto)
+        public AuthResponseDTO Register(RegisterDTO dto)
         {
+            // Check if email already exists
+            var existingUser = db.User.FirstOrDefault(x => x.Email == dto.Email);
+
+            if (existingUser != null)
+                throw new Exception("Email already registered");
+
             var user = mapper.Map<User>(dto);
+
+            // Hash password
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
             db.User.Add(user);
             db.SaveChanges();
@@ -36,15 +41,24 @@ namespace CryptoFolio.Infrastructure.Repository
             return res;
         }
 
-        AuthResponseDTO IAuthService.Login(LoginDTO dto)
+        public AuthResponseDTO Login(LoginDTO dto)
         {
-            var user = db.User
-                .FirstOrDefault(x => x.Email == dto.Email && x.PasswordHash == dto.Password);
+            var user = db.User.FirstOrDefault(x => x.Email == dto.Email);
 
             if (user == null)
-                throw new Exception("Invalid Credentials");
+                throw new Exception("User not found");
+
+            bool isValid = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
+
+            if (!isValid)
+                throw new Exception("Invalid password");
+
+            var token = jwt.GenerateToken(user);
 
             var res = mapper.Map<AuthResponseDTO>(user);
+
+            res.Token = token;
+
             return res;
         }
     }
