@@ -1,4 +1,7 @@
 
+using CryptoFolio.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace CryptofolioAPI
 {
     public class Program
@@ -13,6 +16,9 @@ namespace CryptofolioAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("dbconn")));
 
             var app = builder.Build();
 
@@ -34,3 +40,8 @@ namespace CryptofolioAPI
         }
     }
 }
+
+
+
+//CoinGecko API Key
+//CG - kWML6ofa3cCdoK2qnwvboSZw
