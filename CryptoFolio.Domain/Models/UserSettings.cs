@@ -17,7 +17,19 @@ namespace CryptoFolio.Domain.Models
         public bool ThemeMode { get; set; }
 
         public bool Notifications { get; set; }
+        public DateTime CreatedAt { get; set; }
 
-        public Users User { get; set; }
+        public string CreatedBy { get; set; }
+
+        public DateTime ModifiedAt { get; set; }
+
+        public string ModifiedBy { get; set; }
+
+        public DateTime? DeletedAt { get; set; }
+
+        public string? DeletedBy { get; set; }
+
+        // Navigation
+        public User User { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CryptoFolio.Domain.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace CryptoFolio.Domain.Models
@@ -10,9 +11,9 @@ namespace CryptoFolio.Domain.Models
 
         public int UserId { get; set; }
 
-        public int CryptoID { get; set; }   
+        public int CryptoID { get; set; }
 
-        public string Type { get; set; }
+        public TransactionType Type { get; set; }
 
         public decimal Quantity { get; set; }
 
@@ -26,9 +27,19 @@ namespace CryptoFolio.Domain.Models
 
         public DateTime CreatedAt { get; set; }
 
-        // Navigation
-        public Users User { get; set; }
+        public string CreatedBy { get; set; }
 
-        public CryptoCurrency CryptoCurrency { get; set; } // Navigation Property
+        public DateTime ModifiedAt { get; set; }
+
+        public string ModifiedBy { get; set; }
+
+        public DateTime? DeletedAt { get; set; }
+
+        public string? DeletedBy { get; set; }
+
+        // Navigation
+        public User User { get; set; }
+
+        public CryptoCurrency CryptoCurrency { get; set; }
     }
 }

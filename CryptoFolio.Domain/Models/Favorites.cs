@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CryptoFolio.Domain.Models
 {
-    public class Favorite : BaseEntity
+    public class Favorite 
     {
         [Key]
         public int FavoriteId { get; set; }
@@ -15,9 +15,20 @@ namespace CryptoFolio.Domain.Models
         public int UserId { get; set; }
 
         public int CryptoID { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        public string CreatedBy { get; set; }
+
+        public DateTime ModifiedAt { get; set; }
+
+        public string ModifiedBy { get; set; }
+
+        public DateTime? DeletedAt { get; set; }
+
+        public string? DeletedBy { get; set; }
 
         // Navigation
-        public Users User { get; set; }
+        public User User { get; set; }
 
         public CryptoCurrency CryptoCurrency { get; set; }
     }

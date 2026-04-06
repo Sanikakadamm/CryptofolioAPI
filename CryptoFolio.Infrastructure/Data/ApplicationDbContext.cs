@@ -14,7 +14,7 @@ namespace CryptoFolio.Infrastructure.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
       
 
-        public DbSet<Users> Users { get; set; }
+        public DbSet<User> User { get; set; }
 
         public DbSet<Wallet> Wallets { get; set; }
 
@@ -36,7 +36,7 @@ namespace CryptoFolio.Infrastructure.Data
             base.OnModelCreating(modelBuilder);
 
             // for Users
-            modelBuilder.Entity<Users>(e =>
+            modelBuilder.Entity<User>(e =>
             {
                 e.HasKey(u => u.UserId);
 
@@ -74,11 +74,16 @@ namespace CryptoFolio.Infrastructure.Data
             {
                 e.HasKey(a => a.AssetId);
 
-                e.HasIndex(a => new { a.UserId, a.Symbol });
+                e.HasIndex(a => new { a.UserId, a.CryptoID });
 
                 e.HasOne(a => a.User)
                     .WithMany(u => u.UserAssets)
                     .HasForeignKey(a => a.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(a => a.CryptoCurrency)
+                    .WithMany()
+                    .HasForeignKey(a => a.CryptoID)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -151,18 +156,19 @@ namespace CryptoFolio.Infrastructure.Data
         // Automatically update audit timestamps 
         public override int SaveChanges()
         {
-            var entries = ChangeTracker.Entries<BaseEntity>();
+            var entries = ChangeTracker.Entries()
+                .Where(e => e.Entity.GetType().GetProperty("CreatedAt") != null);
 
             foreach (var entry in entries)
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Entity.CreatedAt = DateTime.UtcNow;
+                    entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
                 }
 
                 if (entry.State == EntityState.Modified)
                 {
-                    entry.Entity.ModifiedAt = DateTime.UtcNow;
+                    entry.Property("ModifiedAt").CurrentValue = DateTime.UtcNow;
                 }
             }
 
